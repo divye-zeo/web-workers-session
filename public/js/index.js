@@ -14,7 +14,7 @@
 
 		myTable = document.getElementById("average-results");
 
-		averageButton.addEventListener("click",calculatAverage,false);
+		averageButton.addEventListener("click",calculateAverage,false);
     }
     
     function addRowToTable(query,result,time){
@@ -27,28 +27,34 @@
         alert("Sample alert to show blocking!!");
     }
 
-    function calculatAverage(){
+    function calculateAverageBetter(){
         var numbers= averageInput.value
         if(!numbers){
             console.log("Please give me something to work with");
             return
         }
         let startTime = new Date().getTime();
-        let len = numbers,
-            sum = 0,
-            i;
-    
+        var len = numbers,
+        sum = 0,
+        i;
+
         if (len === 0) {
-            return 0;
+            addRowToTable(numbers,0,0);
         }
-    
-        for (i = 0; i < len; i++) {
-            console.log('i :: ', i)
-            sum += i;
-        }
-    
-        let endTime = new Date().getTime();
-        addRowToTable(numbers,sum/len,endTime-startTime)
+        let calculateSumAsync = (i) => {
+            if (i < numbers) {
+                // Put the next function call on the event loop.
+                setTimeout(() => {
+                    sum += i;
+                    calculateSumAsync(i + 1);
+                }, 0);
+            } else {
+                // The end of the array is reached so we're invoking the alert.
+                let endTime = new Date().getTime();
+                addRowToTable(numbers,sum/len,endTime-startTime)
+            }
+        };
+        calculateSumAsync(0)
         averageInput.value=null
         doAlert();
     }
