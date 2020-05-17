@@ -5,6 +5,7 @@
     var averageInput;
     var averageButton;
     var myTable;
+    var worker;
 	// **********************************
 
 	function ready() {
@@ -14,7 +15,15 @@
 
 		myTable = document.getElementById("average-results");
 
-		averageButton.addEventListener("click",calculateAverage,false);
+        averageButton.addEventListener("click",calculateAverage,false);
+
+        worker = new Worker('/js/worker.js'); // lets just first write a basic worker that kind of just exchanges some greeting  
+        worker.addEventListener("message",onMessage);
+        worker.postMessage({message:"Hello stupid worker"});
+    }
+
+    function onMessage(evt){
+        console.log("Recieved a message from Worker:",evt.data.message);
     }
     
     function addRowToTable(query,result,time){
