@@ -23,9 +23,33 @@
         myTable.appendChild(p);
     }
 
+    function doAlert(){
+        alert("Sample alert to show blocking!!");
+    }
+
     function calculatAverage(){
-        var averageOf= averageInput.value
-        addRowToTable(averageOf,20,100)
+        var numbers= averageInput.value
+        if(!numbers){
+            console.log("Please give me something to work with");
+            return
+        }
+        let startTime = new Date().getTime();
+        let len = numbers,
+            sum = 0,
+            i;
+    
+        if (len === 0) {
+            return 0;
+        }
+    
+        for (i = 0; i < len; i++) {
+            console.log('i :: ', i)
+            sum += i;
+        }
+    
+        let endTime = new Date().getTime();
+        addRowToTable(numbers,sum/len,endTime-startTime)
         averageInput.value=null
+        doAlert();
     }
 })()
