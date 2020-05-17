@@ -4,6 +4,7 @@
     document.addEventListener("DOMContentLoaded",ready,false);
     var averageInput;
     var averageButton;
+    var stopButton;
     var myTable;
     var worker;
 	// **********************************
@@ -12,18 +13,18 @@
         console.log("My script is ready to perform")
         averageInput = document.getElementById("average-input");
         averageButton = document.getElementById("average-button");
-
+        stopButton = document.getElementById("stop-button");
 		myTable = document.getElementById("average-results");
 
         averageButton.addEventListener("click",calculateAverage,false);
-
-        worker = new Worker('/js/worker.js'); // lets just first write a basic worker that kind of just exchanges some greeting  
-        worker.addEventListener("message",onMessage);
-        worker.postMessage({message:"Hello stupid worker"});
+        stopButton.addEventListener("click",stopCalc,false);
+        stopButton.style.visibility="hidden";
+        
     }
 
     function onMessage(evt){
-        console.log("Recieved a message from Worker:",evt.data.message);
+        stopButton.style.visibility="hidden";
+        addRowToTable(evt.data.numbers,evt.data.average,evt.data.time)
     }
     
     function addRowToTable(query,result,time){
@@ -38,33 +39,14 @@
 
     function calculateAverage(){
         var numbers= averageInput.value
-        if(!numbers){
-            console.log("Please give me something to work with");
-            return
-        }
-        let startTime = new Date().getTime();
-        var len = numbers,
-        sum = 0,
-        i;
-
-        if (len === 0) {
-            addRowToTable(numbers,0,0);
-        }
-        let calculateSumAsync = (i) => {
-            if (i < numbers) {
-                // Put the next function call on the event loop.
-                setTimeout(() => {
-                    sum += i;
-                    calculateSumAsync(i + 1);
-                }, 0);
-            } else {
-                // The end of the array is reached so we're invoking the alert.
-                let endTime = new Date().getTime();
-                addRowToTable(numbers,sum/len,endTime-startTime)
-            }
-        };
-        calculateSumAsync(0)
-        averageInput.value=null
-        doAlert();
+        if(!numbers  || numbers === 0) return 0;
+        worker = new Worker('/js/worker.js'); // lets just first write a basic worker that kind of just exchanges some greeting  
+        stopButton.style.visibility="visible";
+        worker.addEventListener("message",onMessage);
+        worker.postMessage({numbers:numbers});
+    }
+    function stopCalc(){
+        worker.terminate();
+        stopButton.style.visibility="hidden";
     }
 })()
