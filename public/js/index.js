@@ -27,7 +27,7 @@
         alert("Sample alert to show blocking!!");
     }
 
-    function calculateAverageBetter(){
+    function calculateAverage(){
         var numbers= averageInput.value
         if(!numbers){
             console.log("Please give me something to work with");
